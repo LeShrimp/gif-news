@@ -29,7 +29,7 @@ postRequest : Task RawError Response
 postRequest =
   send defaultSettings
     { verb = "POST"
-    , headers = ["Content-Type" => "text/plain"]
+    , headers = ["Content-Type" => "application/json"]
     , url = "http://www.thereisbeauty.de/mini-scraper/"
     , body = Http.string requestBody
     }
