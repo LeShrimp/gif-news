@@ -8579,7 +8579,7 @@ Elm.Main.make = function (_elm) {
    var postRequest = A2($Http.send,
    $Http.defaultSettings,
    {verb: "POST"
-   ,headers: _U.list([A2(_op["=>"],"Content-Type","text/plain")])
+   ,headers: _U.list([A2(_op["=>"],"Content-Type","application/json")])
    ,url: "http://www.thereisbeauty.de/mini-scraper/"
    ,body: $Http.string(requestBody)});
    var fetchHeadlines = function () {
