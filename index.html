@@ -8569,23 +8569,74 @@ Elm.Main.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Task = Elm.Task.make(_elm);
    var _op = {};
+   var rawErrorToErrorMessage = function (error) {
+      var _p0 = error;
+      if (_p0.ctor === "RawTimeout") {
+            return $Task.fail("Connection timed out");
+         } else {
+            return $Task.fail("Network error");
+         }
+   };
+   var decodeResponse = function (response) {
+      var errorDecoder = A2($Json$Decode._op[":="],"error",$Json$Decode.string);
+      var tryDecodeError = function (str) {
+         var _p1 = A2($Json$Decode.decodeString,errorDecoder,str);
+         if (_p1.ctor === "Ok") {
+               return $Task.fail(_p1._0);
+            } else {
+               return $Task.fail(A2($Basics._op["++"],"Unable to decode response: ",str));
+            }
+      };
+      var successDecoder = A2($Json$Decode._op[":="],"resut",$Json$Decode.list($Json$Decode.string));
+      var decodeResponseText = function (str) {
+         var _p2 = A2($Json$Decode.decodeString,successDecoder,str);
+         if (_p2.ctor === "Ok") {
+               return $Task.succeed(_p2._0);
+            } else {
+               return tryDecodeError(str);
+            }
+      };
+      if (_U.cmp(200,response.status) < 1 && _U.cmp(response.status,300) < 0) {
+            var _p3 = response.value;
+            if (_p3.ctor === "Text") {
+                  return decodeResponseText(_p3._0);
+               } else {
+                  return $Task.fail("Response body is a blob, expecting a string.");
+               }
+         } else return $Task.fail(A2($Basics._op["++"],$Basics.toString(response.status),A2($Basics._op["++"]," ",response.statusText)));
+   };
    var headlines = $Signal.mailbox(_U.list([]));
    var main = A2($Signal.map,$Graphics$Element.show,headlines.signal);
    _op["=>"] = F2(function (v0,v1) {    return {ctor: "_Tuple2",_0: v0,_1: v1};});
-   var requestBody = A2($Json$Encode.encode,
-   0,
-   $Json$Encode.object(_U.list([A2(_op["=>"],"url",$Json$Encode.string("http://edition.cnn.com/"))
-                               ,A2(_op["=>"],"selector",$Json$Encode.string(".cn--idx-1 .cd__headline .cd__headline-text"))])));
-   var postRequest = A2($Http.send,
-   $Http.defaultSettings,
-   {verb: "POST"
-   ,headers: _U.list([A2(_op["=>"],"Content-Type","application/json")])
-   ,url: "http://www.thereisbeauty.de/mini-scraper/"
-   ,body: $Http.string(requestBody)});
-   var fetchHeadlines = function () {
-      var decoder = A2($Json$Decode._op[":="],"result",$Json$Decode.list($Json$Decode.string));
-      return A2($Http.fromJson,decoder,postRequest);
-   }();
-   var run = Elm.Native.Task.make(_elm).perform(A2($Task.andThen,fetchHeadlines,$Signal.send(headlines.address)));
-   return _elm.Main.values = {_op: _op,main: main,headlines: headlines,fetchHeadlines: fetchHeadlines,postRequest: postRequest,requestBody: requestBody};
+   var requestBody = F2(function (url,selector) {
+      return A2($Json$Encode.encode,
+      0,
+      $Json$Encode.object(_U.list([A2(_op["=>"],"url",$Json$Encode.string(url)),A2(_op["=>"],"selector",$Json$Encode.string(selector))])));
+   });
+   var postRequest = F2(function (url,selector) {
+      return A2($Http.send,
+      $Http.defaultSettings,
+      {verb: "POST"
+      ,headers: _U.list([A2(_op["=>"],"Content-Type","application/json")])
+      ,url: "http://www.thereisbeauty.de/mini-scraper/"
+      ,body: $Http.string(A2(requestBody,url,selector))});
+   });
+   var scrapeTexts = F2(function (url,selector) {
+      return A2($Task.andThen,A2($Task.onError,A2(postRequest,url,selector),rawErrorToErrorMessage),decodeResponse);
+   });
+   var fetchHeadlines = A2(scrapeTexts,"http://edition.cnn.com/",".cn--idx-1 .cd__headline .cd__headline-text");
+   var run = Elm.Native.Task.make(_elm).perform(A2($Task.onError,
+   A2($Task.andThen,fetchHeadlines,$Signal.send(headlines.address)),
+   function (_p4) {
+      return A2($Signal.send,headlines.address,function (msg) {    return _U.list([A2($Basics._op["++"],"Error: ",msg)]);}(_p4));
+   }));
+   return _elm.Main.values = {_op: _op
+                             ,main: main
+                             ,headlines: headlines
+                             ,fetchHeadlines: fetchHeadlines
+                             ,scrapeTexts: scrapeTexts
+                             ,decodeResponse: decodeResponse
+                             ,rawErrorToErrorMessage: rawErrorToErrorMessage
+                             ,postRequest: postRequest
+                             ,requestBody: requestBody};
 };</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script></body></html>

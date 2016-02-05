@@ -4,6 +4,8 @@ import Json.Decode exposing (..)
 import Http exposing (..)
 import Task exposing (..)
 
+type alias ErrorMessage = String
+
 (=>) = (,)
 
 main =
@@ -13,31 +15,67 @@ headlines : Signal.Mailbox (List String)
 headlines =
   Signal.mailbox []
 
-port run : Task Error ()
+port run : Task x ()
 port run =
-  fetchHeadlines `Task.andThen` Signal.send headlines.address
+  fetchHeadlines
+    `Task.andThen` (Signal.send headlines.address)
+    `Task.onError` (Signal.send headlines.address << (\msg -> ["Error: " ++ msg]))
 
-fetchHeadlines : Task Error (List String)
+fetchHeadlines : Task ErrorMessage (List String)
 fetchHeadlines =
-  let
-    decoder =
-      "result" := (Json.Decode.list Json.Decode.string)
-  in
-    fromJson decoder postRequest
+  scrapeTexts "http://edition.cnn.com/" ".cn--idx-1 .cd__headline .cd__headline-text"
 
-postRequest : Task RawError Response
-postRequest =
+scrapeTexts : String -> String -> Task ErrorMessage (List String)
+scrapeTexts url selector =
+  (postRequest url selector) `Task.onError` rawErrorToErrorMessage `Task.andThen` decodeResponse
+
+decodeResponse : Response -> Task ErrorMessage (List String)
+decodeResponse response =
+  let
+    successDecoder =
+      "result" := (Json.Decode.list Json.Decode.string)
+    errorDecoder =
+      "error" := Json.Decode.string
+
+    decodeResponseText str =
+      case Json.Decode.decodeString successDecoder str of
+        Ok r -> Task.succeed r
+        Err _ -> tryDecodeError str
+
+    tryDecodeError str =
+      case Json.Decode.decodeString errorDecoder str of
+        Ok e -> Task.fail e
+        Err _ -> Task.fail ("Unable to decode response: " ++ str)
+
+  in
+    if 200 <= response.status && response.status < 300 then
+        case response.value of
+          Text str ->
+            decodeResponseText str
+          _ ->
+            Task.fail "Response body is a blob, expecting a string."
+    else
+        Task.fail <| toString response.status ++ " " ++ response.statusText
+
+rawErrorToErrorMessage : RawError -> Task ErrorMessage Response
+rawErrorToErrorMessage error =
+  case error of
+    RawTimeout -> Task.fail "Connection timed out"
+    RawNetworkError -> Task.fail "Network error"
+
+postRequest : String -> String -> Task RawError Response
+postRequest url selector =
   send defaultSettings
     { verb = "POST"
     , headers = ["Content-Type" => "application/json"]
     , url = "http://www.thereisbeauty.de/mini-scraper/"
-    , body = Http.string requestBody
+    , body = Http.string (requestBody url selector)
     }
 
-requestBody : String
-requestBody =
+requestBody : String -> String -> String
+requestBody url selector =
   encode 0
   <| object
-    ["url" => Json.Encode.string "http://edition.cnn.com/"
-    ,"selector" => Json.Encode.string ".cn--idx-1 .cd__headline .cd__headline-text"
+    ["url" => Json.Encode.string url
+    ,"selector" => Json.Encode.string selector
     ]
