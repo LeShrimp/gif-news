@@ -1,4 +1,8 @@
-import Graphics.Element exposing (show)
+module MiniScraper
+  (scrapeTexts
+  ,fetchHeadlines
+  ) where
+
 import Json.Encode exposing (..)
 import Json.Decode exposing (..)
 import Http exposing (..)
@@ -7,19 +11,6 @@ import Task exposing (..)
 type alias ErrorMessage = String
 
 (=>) = (,)
-
-main =
-  Signal.map show headlines.signal
-
-headlines : Signal.Mailbox (List String)
-headlines =
-  Signal.mailbox []
-
-port run : Task x ()
-port run =
-  fetchHeadlines
-    `Task.andThen` (Signal.send headlines.address)
-    `Task.onError` (Signal.send headlines.address << (\msg -> ["Error: " ++ msg]))
 
 fetchHeadlines : Task ErrorMessage (List String)
 fetchHeadlines =
