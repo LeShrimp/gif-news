@@ -1,6 +1,5 @@
 module MiniScraper
   (scrapeTexts
-  ,fetchHeadlines
   ) where
 
 import Json.Encode exposing (..)
@@ -11,10 +10,6 @@ import Task exposing (..)
 type alias ErrorMessage = String
 
 (=>) = (,)
-
-fetchHeadlines : Task ErrorMessage (List String)
-fetchHeadlines =
-  scrapeTexts "http://edition.cnn.com/" ".cn--idx-1 .cd__headline .cd__headline-text"
 
 scrapeTexts : String -> String -> Task ErrorMessage (List String)
 scrapeTexts url selector =
