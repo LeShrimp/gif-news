@@ -11025,31 +11025,36 @@ Elm.MainLogic.make = function (_elm) {
    $MiniScraper = Elm.MiniScraper.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
    $Task = Elm.Task.make(_elm);
    var _op = {};
    var currentHeadline = function (model) {    return A2($Maybe.withDefault,"",$List.head(A2($List.drop,model.index,model.headlines)));};
    var Next = {ctor: "Next"};
    var view = F2(function (address,model) {
+      var renderImages = A2($List.map,function (url) {    return A2($Html.img,_U.list([$Html$Attributes.src(url)]),_U.list([]));},model.gifUrls);
       return A2($Html.div,
       _U.list([A2($Html$Events.onClick,address,Next)]),
-      _U.list([A2($Html.img,_U.list([$Html$Attributes.src(model.gifUrl)]),_U.list([])),$Html.text(currentHeadline(model))]));
+      _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text(currentHeadline(model))])),A2($Html.div,_U.list([]),renderImages)]));
    });
-   var NewGifUrl = function (a) {    return {ctor: "NewGifUrl",_0: a};};
-   var fetchGifUrls = function (phrase) {    return $Effects.task(A2($Task.map,NewGifUrl,$Task.toMaybe($Giphy.getTranslateGif(phrase))));};
+   var NewGifUrls = function (a) {    return {ctor: "NewGifUrls",_0: a};};
+   var fetchGifUrls = function (phrase) {
+      return $Effects.task(A2($Task.map,NewGifUrls,$Task.toMaybe($Task.sequence(A2($List.map,$Giphy.getTranslateGif,$String.words(phrase))))));
+   };
    var update = F2(function (action,model) {
       var _p0 = action;
       switch (_p0.ctor)
       {case "NewHeadlines": var newModel = _U.update(model,{headlines: A2($Maybe.withDefault,model.headlines,_p0._0),index: 0});
            return {ctor: "_Tuple2",_0: newModel,_1: fetchGifUrls(currentHeadline(newModel))};
-         case "NewGifUrl": return {ctor: "_Tuple2",_0: _U.update(model,{gifUrl: A2($Maybe.withDefault,model.gifUrl,_p0._0)}),_1: $Effects.none};
-         default: return {ctor: "_Tuple2",_0: _U.update(model,{index: A2($Basics._op["%"],model.index + 1,$List.length(model.headlines))}),_1: $Effects.none};}
+         case "NewGifUrls": return {ctor: "_Tuple2",_0: _U.update(model,{gifUrls: A2($Maybe.withDefault,model.gifUrls,_p0._0)}),_1: $Effects.none};
+         default: var newModel = _U.update(model,{index: A2($Basics._op["%"],model.index + 1,$List.length(model.headlines)),gifUrls: _U.list([])});
+           return {ctor: "_Tuple2",_0: newModel,_1: fetchGifUrls(currentHeadline(newModel))};}
    });
    var NewHeadlines = function (a) {    return {ctor: "NewHeadlines",_0: a};};
    var fetchHeadlines = $Effects.task(A2($Task.map,
    NewHeadlines,
    $Task.toMaybe(A2($MiniScraper.scrapeTexts,"http://edition.cnn.com/",".cn--idx-1 .cd__headline .cd__headline-text"))));
-   var Model = F3(function (a,b,c) {    return {headlines: a,index: b,gifUrl: c};});
-   var init = {ctor: "_Tuple2",_0: A3(Model,_U.list([]),0,""),_1: fetchHeadlines};
+   var Model = F3(function (a,b,c) {    return {headlines: a,index: b,gifUrls: c};});
+   var init = {ctor: "_Tuple2",_0: A3(Model,_U.list([]),0,_U.list([])),_1: fetchHeadlines};
    return _elm.MainLogic.values = {_op: _op,init: init,view: view,update: update};
 };Elm.StartApp = Elm.StartApp || {};
 Elm.StartApp.make = function (_elm) {

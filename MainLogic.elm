@@ -12,16 +12,17 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Task exposing (..)
+import String exposing (words)
 
 type alias Model =
   { headlines : List String
   , index : Int
-  , gifUrl : String
+  , gifUrls : List String
   }
 
 type Action
   = NewHeadlines (Maybe (List String))
-  | NewGifUrl (Maybe (String))
+  | NewGifUrls (Maybe (List String))
   | Next
 
 fetchHeadlines : Effects Action
@@ -33,14 +34,25 @@ fetchHeadlines =
 
 fetchGifUrls : String -> Effects Action
 fetchGifUrls phrase =
-  getTranslateGif phrase
+  List.map getTranslateGif (words phrase)
+    |> Task.sequence
     |> Task.toMaybe
-    |> Task.map NewGifUrl
+    |> Task.map NewGifUrls
     |> Effects.task
+
+{-
+headlineToPhrases : String -> List String
+headlineToPhrases headline =
+  List.filter (\s -> String.length s <= 3) (words headline) |> groups 2
+
+groups : Int -> List a -> List (List a)
+groups  xs
+-}
+
 
 init : (Model, Effects Action)
 init =
-  ( Model [] 0 ""
+  ( Model [] 0 []
   , fetchHeadlines
   )
 
@@ -56,15 +68,19 @@ update action model =
         , fetchGifUrls (currentHeadline newModel)
         )
 
-    NewGifUrl gifUrl ->
-      ( {model | gifUrl = (Maybe.withDefault model.gifUrl gifUrl) }
+    NewGifUrls gifUrls ->
+      ( {model | gifUrls = (Maybe.withDefault model.gifUrls gifUrls) }
       , Effects.none
       )
 
     Next ->
-      ( {model | index = (model.index + 1) % (List.length model.headlines)}
-      , Effects.none
-      )
+      let
+        newModel =
+          {model | index = (model.index + 1) % (List.length model.headlines), gifUrls = []}
+      in
+        ( newModel
+        , fetchGifUrls (currentHeadline newModel)
+        )
 
 currentHeadline : Model -> String
 currentHeadline model =
@@ -74,7 +90,11 @@ currentHeadline model =
 
 view : Signal.Address Action -> Model -> Html
 view address model =
-  div [onClick address Next]
-    [ img [src model.gifUrl] []
-    , text (currentHeadline model)
-    ]
+  let
+    renderImages =
+      List.map (\url -> img [src url] []) model.gifUrls
+  in
+    div [onClick address Next]
+      [ h1 [] [text (currentHeadline model)]
+      , div [] renderImages
+      ]
