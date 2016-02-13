@@ -12,7 +12,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Task exposing (..)
-import String exposing (words)
+import String exposing (words, join)
+import Char exposing (..)
 
 type alias Model =
   { headlines : List String
@@ -27,28 +28,47 @@ type Action
 
 fetchHeadlines : Effects Action
 fetchHeadlines =
-  scrapeTexts "http://edition.cnn.com/" ".cn--idx-1 .cd__headline .cd__headline-text"
+  scrapeTexts "http://edition.cnn.com/" ".cd__headline .cd__headline-text"
     |> Task.toMaybe
     |> Task.map NewHeadlines
     |> Effects.task
 
+
+getTranslateGifNoFail : String -> Task x String
+getTranslateGifNoFail phrase =
+  getTranslateGif phrase `onError` (\_ -> succeed "")
+
 fetchGifUrls : String -> Effects Action
-fetchGifUrls phrase =
-  List.map getTranslateGif (words phrase)
+fetchGifUrls headline =
+  List.map getTranslateGifNoFail (headlineToPhrases headline)
     |> Task.sequence
     |> Task.toMaybe
     |> Task.map NewGifUrls
     |> Effects.task
 
-{-
-headlineToPhrases : String -> List String
-headlineToPhrases headline =
-  List.filter (\s -> String.length s <= 3) (words headline) |> groups 2
 
-groups : Int -> List a -> List (List a)
-groups  xs
+{-
+fetchGifUrls : String -> Effects Action
+fetchGifUrls headline =
+  fetchGifUrlsForListOfPhrases (headlineToPhrases headline)
 -}
 
+headlineToPhrases : String -> List String
+headlineToPhrases headline =
+  words headline
+    |> List.map String.toLower
+    |> List.map (String.filter Char.isLower)
+    |> List.filter (\s -> String.length s > 3)
+    |> groups 2
+    |> List.map (join " ")
+
+groups : Int -> List a -> List (List a)
+groups n xs =
+  case xs of
+    [] ->
+      []
+    xs ->
+      (List.take n xs) :: (groups n (List.drop n xs))
 
 init : (Model, Effects Action)
 init =

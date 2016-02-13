@@ -1,6 +1,5 @@
-<!DOCTYPE HTML>
-<html><head><meta charset="UTF-8"><title>Main</title><style>html,head,body { padding:0; margin:0; }
-body { font-family: calibri, helvetica, arial, sans-serif; }</style><script type="text/javascript">var Elm = Elm || { Native: {} };Elm.Native.Basics = {};
+var Elm = Elm || { Native: {} };
+Elm.Native.Basics = {};
 Elm.Native.Basics.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
 	localRuntime.Native.Basics = localRuntime.Native.Basics || {};
@@ -136,6 +135,7 @@ Elm.Native.Basics.make = function(localRuntime) {
 		isInfinite: isInfinite
 	};
 };
+
 Elm.Native.Port = {};
 
 Elm.Native.Port.make = function(localRuntime) {
@@ -267,6 +267,7 @@ Elm.Native.Port.make = function(localRuntime) {
 		outboundSignal: outboundSignal
 	};
 };
+
 if (!Elm.fullscreen) {
 	(function() {
 		'use strict';
@@ -903,6 +904,7 @@ if (!Elm.fullscreen) {
 			: fun(a)(b)(c)(d)(e)(f)(g)(h)(i);
 	}
 }
+
 Elm.Native = Elm.Native || {};
 Elm.Native.Utils = {};
 Elm.Native.Utils.make = function(localRuntime) {
@@ -1433,6 +1435,7 @@ Elm.Native.Utils.make = function(localRuntime) {
 		toString: toString
 	};
 };
+
 Elm.Basics = Elm.Basics || {};
 Elm.Basics.make = function (_elm) {
    "use strict";
@@ -1547,7 +1550,8 @@ Elm.Basics.make = function (_elm) {
                                ,LT: LT
                                ,EQ: EQ
                                ,GT: GT};
-};Elm.Maybe = Elm.Maybe || {};
+};
+Elm.Maybe = Elm.Maybe || {};
 Elm.Maybe.make = function (_elm) {
    "use strict";
    _elm.Maybe = _elm.Maybe || {};
@@ -1628,7 +1632,8 @@ Elm.Maybe.make = function (_elm) {
                               ,oneOf: oneOf
                               ,Just: Just
                               ,Nothing: Nothing};
-};Elm.Native.List = {};
+};
+Elm.Native.List = {};
 Elm.Native.List.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
 	localRuntime.Native.List = localRuntime.Native.List || {};
@@ -1792,6 +1797,7 @@ Elm.Native.List.make = function(localRuntime) {
 	};
 	return localRuntime.Native.List.values = Elm.Native.List.values;
 };
+
 Elm.List = Elm.List || {};
 Elm.List.make = function (_elm) {
    "use strict";
@@ -1965,7 +1971,8 @@ Elm.List.make = function (_elm) {
                              ,sort: sort
                              ,sortBy: sortBy
                              ,sortWith: sortWith};
-};Elm.Native.Transform2D = {};
+};
+Elm.Native.Transform2D = {};
 Elm.Native.Transform2D.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
 	localRuntime.Native.Transform2D = localRuntime.Native.Transform2D || {};
@@ -2075,6 +2082,7 @@ Elm.Native.Transform2D.make = function(localRuntime) {
 		*/
 	};
 };
+
 Elm.Transform2D = Elm.Transform2D || {};
 Elm.Transform2D.make = function (_elm) {
    "use strict";
@@ -2101,6 +2109,7 @@ Elm.Transform2D.make = function (_elm) {
                                     ,scaleX: scaleX
                                     ,scaleY: scaleY};
 };
+
 // setup
 Elm.Native = Elm.Native || {};
 Elm.Native.Graphics = Elm.Native.Graphics || {};
@@ -2764,6 +2773,7 @@ Elm.Native.Graphics.Collage.make = function(localRuntime) {
 		collage: F3(collage)
 	};
 };
+
 Elm.Native.Color = {};
 Elm.Native.Color.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
@@ -2803,6 +2813,7 @@ Elm.Native.Color.make = function(localRuntime) {
 		toCss: toCss
 	};
 };
+
 Elm.Color = Elm.Color || {};
 Elm.Color.make = function (_elm) {
    "use strict";
@@ -2966,6 +2977,7 @@ Elm.Color.make = function (_elm) {
                               ,gray: gray
                               ,darkGray: darkGray};
 };
+
 // setup
 Elm.Native = Elm.Native || {};
 Elm.Native.Graphics = Elm.Native.Graphics || {};
@@ -3701,6 +3713,7 @@ Elm.Native.Graphics.Element.make = function(localRuntime) {
 		markdown: markdown
 	};
 };
+
 Elm.Native.Text = {};
 Elm.Native.Text.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
@@ -3988,6 +4001,7 @@ Elm.Native.Text.make = function(localRuntime) {
 		renderHtml: renderHtml
 	};
 };
+
 Elm.Text = Elm.Text || {};
 Elm.Text.make = function (_elm) {
    "use strict";
@@ -4039,7 +4053,8 @@ Elm.Text.make = function (_elm) {
                              ,Under: Under
                              ,Over: Over
                              ,Through: Through};
-};Elm.Graphics = Elm.Graphics || {};
+};
+Elm.Graphics = Elm.Graphics || {};
 Elm.Graphics.Element = Elm.Graphics.Element || {};
 Elm.Graphics.Element.make = function (_elm) {
    "use strict";
@@ -4236,7 +4251,8 @@ Elm.Graphics.Element.make = function (_elm) {
                                          ,topRightAt: topRightAt
                                          ,bottomLeftAt: bottomLeftAt
                                          ,bottomRightAt: bottomRightAt};
-};Elm.Graphics = Elm.Graphics || {};
+};
+Elm.Graphics = Elm.Graphics || {};
 Elm.Graphics.Collage = Elm.Graphics.Collage || {};
 Elm.Graphics.Collage.make = function (_elm) {
    "use strict";
@@ -4367,7 +4383,8 @@ Elm.Graphics.Collage.make = function (_elm) {
                                          ,Smooth: Smooth
                                          ,Sharp: Sharp
                                          ,Clipped: Clipped};
-};Elm.Native.Debug = {};
+};
+Elm.Native.Debug = {};
 Elm.Native.Debug.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
 	localRuntime.Native.Debug = localRuntime.Native.Debug || {};
@@ -4433,6 +4450,7 @@ Elm.Native.Debug.make = function(localRuntime) {
 		watchSummary: F3(watchSummary)
 	};
 };
+
 Elm.Debug = Elm.Debug || {};
 Elm.Debug.make = function (_elm) {
    "use strict";
@@ -4446,7 +4464,8 @@ Elm.Debug.make = function (_elm) {
    var crash = $Native$Debug.crash;
    var log = $Native$Debug.log;
    return _elm.Debug.values = {_op: _op,log: log,crash: crash,watch: watch,watchSummary: watchSummary,trace: trace};
-};Elm.Result = Elm.Result || {};
+};
+Elm.Result = Elm.Result || {};
 Elm.Result.make = function (_elm) {
    "use strict";
    _elm.Result = _elm.Result || {};
@@ -4546,7 +4565,8 @@ Elm.Result.make = function (_elm) {
                                ,formatError: formatError
                                ,Ok: Ok
                                ,Err: Err};
-};Elm.Native.Signal = {};
+};
+Elm.Native.Signal = {};
 
 Elm.Native.Signal.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
@@ -5016,6 +5036,7 @@ Elm.Native.Signal.make = function(localRuntime) {
 		delay: F2(delay)
 	};
 };
+
 Elm.Native.Task = {};
 
 Elm.Native.Task.make = function(localRuntime) {
@@ -5241,6 +5262,7 @@ Elm.Native.Task.make = function(localRuntime) {
 		sleep: sleep
 	};
 };
+
 Elm.Task = Elm.Task || {};
 Elm.Task.make = function (_elm) {
    "use strict";
@@ -5332,7 +5354,8 @@ Elm.Task.make = function (_elm) {
                              ,fromResult: fromResult
                              ,spawn: spawn
                              ,sleep: sleep};
-};Elm.Signal = Elm.Signal || {};
+};
+Elm.Signal = Elm.Signal || {};
 Elm.Signal.make = function (_elm) {
    "use strict";
    _elm.Signal = _elm.Signal || {};
@@ -5397,7 +5420,8 @@ Elm.Signal.make = function (_elm) {
                                ,message: message
                                ,forwardTo: forwardTo
                                ,Mailbox: Mailbox};
-};Elm.Native.Json = {};
+};
+Elm.Native.Json = {};
 
 Elm.Native.Json.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
@@ -5892,6 +5916,7 @@ Elm.Native.Json.make = function(localRuntime) {
 
 	};
 };
+
 Elm.Native.Array = {};
 Elm.Native.Array.make = function(localRuntime) {
 
@@ -6872,6 +6897,7 @@ Elm.Native.Array.make = function(localRuntime) {
 
 	return localRuntime.Native.Array.values = Elm.Native.Array.values;
 };
+
 Elm.Array = Elm.Array || {};
 Elm.Array.make = function (_elm) {
    "use strict";
@@ -6931,7 +6957,8 @@ Elm.Array.make = function (_elm) {
                               ,filter: filter
                               ,foldl: foldl
                               ,foldr: foldr};
-};Elm.Native.String = {};
+};
+Elm.Native.String = {};
 
 Elm.Native.String.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
@@ -7272,6 +7299,7 @@ Elm.Native.String.make = function(localRuntime) {
 		fromList: fromList
 	};
 };
+
 Elm.Native.Char = {};
 Elm.Native.Char.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
@@ -7292,6 +7320,7 @@ Elm.Native.Char.make = function(localRuntime) {
 		toLocaleLower: function(c) { return Utils.chr(c.toLocaleLowerCase()); }
 	};
 };
+
 Elm.Char = Elm.Char || {};
 Elm.Char.make = function (_elm) {
    "use strict";
@@ -7325,7 +7354,8 @@ Elm.Char.make = function (_elm) {
                              ,toLocaleLower: toLocaleLower
                              ,toCode: toCode
                              ,fromCode: fromCode};
-};Elm.String = Elm.String || {};
+};
+Elm.String = Elm.String || {};
 Elm.String.make = function (_elm) {
    "use strict";
    _elm.String = _elm.String || {};
@@ -7415,7 +7445,8 @@ Elm.String.make = function (_elm) {
                                ,foldr: foldr
                                ,any: any
                                ,all: all};
-};Elm.Dict = Elm.Dict || {};
+};
+Elm.Dict = Elm.Dict || {};
 Elm.Dict.make = function (_elm) {
    "use strict";
    _elm.Dict = _elm.Dict || {};
@@ -7975,7 +8006,8 @@ Elm.Dict.make = function (_elm) {
                              ,values: values
                              ,toList: toList
                              ,fromList: fromList};
-};Elm.Json = Elm.Json || {};
+};
+Elm.Json = Elm.Json || {};
 Elm.Json.Encode = Elm.Json.Encode || {};
 Elm.Json.Encode.make = function (_elm) {
    "use strict";
@@ -8004,7 +8036,8 @@ Elm.Json.Encode.make = function (_elm) {
                                     ,list: list
                                     ,array: array
                                     ,object: object};
-};Elm.Json = Elm.Json || {};
+};
+Elm.Json = Elm.Json || {};
 Elm.Json.Decode = Elm.Json.Decode || {};
 Elm.Json.Decode.make = function (_elm) {
    "use strict";
@@ -8095,7 +8128,8 @@ Elm.Json.Decode.make = function (_elm) {
                                     ,andThen: andThen
                                     ,value: value
                                     ,customDecoder: customDecoder};
-};Elm.Native.Http = {};
+};
+Elm.Native.Http = {};
 Elm.Native.Http.make = function(localRuntime) {
 
 	localRuntime.Native = localRuntime.Native || {};
@@ -8279,6 +8313,7 @@ Elm.Native.Http.make = function(localRuntime) {
 		uriDecode: uriDecode
 	};
 };
+
 Elm.Native.Time = {};
 
 Elm.Native.Time.make = function(localRuntime)
@@ -8388,6 +8423,7 @@ Elm.Native.Time.make = function(localRuntime)
 		read: read
 	};
 };
+
 Elm.Time = Elm.Time || {};
 Elm.Time.make = function (_elm) {
    "use strict";
@@ -8433,7 +8469,8 @@ Elm.Time.make = function (_elm) {
                              ,timestamp: timestamp
                              ,delay: delay
                              ,since: since};
-};Elm.Http = Elm.Http || {};
+};
+Elm.Http = Elm.Http || {};
 Elm.Http.make = function (_elm) {
    "use strict";
    _elm.Http = _elm.Http || {};
@@ -8551,7 +8588,8 @@ Elm.Http.make = function (_elm) {
                              ,BadResponse: BadResponse
                              ,RawTimeout: RawTimeout
                              ,RawNetworkError: RawNetworkError};
-};Elm.Giphy = Elm.Giphy || {};
+};
+Elm.Giphy = Elm.Giphy || {};
 Elm.Giphy.make = function (_elm) {
    "use strict";
    _elm.Giphy = _elm.Giphy || {};
@@ -8589,7 +8627,8 @@ Elm.Giphy.make = function (_elm) {
    };
    var getTranslateGif = function (phrase) {    return A2($Task.onError,A2($Http.get,decodeTranslateUrl,translateUrl(phrase)),errorToErrorMessage);};
    return _elm.Giphy.values = {_op: _op,getRandomGif: getRandomGif,getTranslateGif: getTranslateGif};
-};Elm.MiniScraper = Elm.MiniScraper || {};
+};
+Elm.MiniScraper = Elm.MiniScraper || {};
 Elm.MiniScraper.make = function (_elm) {
    "use strict";
    _elm.MiniScraper = _elm.MiniScraper || {};
@@ -8660,7 +8699,8 @@ Elm.MiniScraper.make = function (_elm) {
       return A2($Task.andThen,A2($Task.onError,A2(postRequest,url,selector),rawErrorToErrorMessage),decodeResponse);
    });
    return _elm.MiniScraper.values = {_op: _op,scrapeTexts: scrapeTexts};
-};Elm.Native.Effects = {};
+};
+Elm.Native.Effects = {};
 Elm.Native.Effects.make = function(localRuntime) {
 
 	localRuntime.Native = localRuntime.Native || {};
@@ -8800,6 +8840,7 @@ Elm.Native.Effects.make = function(localRuntime) {
 	};
 
 };
+
 Elm.Effects = Elm.Effects || {};
 Elm.Effects.make = function (_elm) {
    "use strict";
@@ -8855,7 +8896,8 @@ Elm.Effects.make = function (_elm) {
          default: return Batch(A2($List.map,map(func),_p7._0));}
    });
    return _elm.Effects.values = {_op: _op,none: none,task: task,tick: tick,map: map,batch: batch,toTask: toTask};
-};(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+};
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
 (function (global){
@@ -10449,6 +10491,7 @@ Elm.Native.VirtualDom.make = function(elm)
 };
 
 },{"virtual-dom/vdom/create-element":6,"virtual-dom/vdom/patch":9,"virtual-dom/vnode/is-vhook":13,"virtual-dom/vnode/vnode":18,"virtual-dom/vnode/vtext":20,"virtual-dom/vtree/diff":22}]},{},[23]);
+
 Elm.VirtualDom = Elm.VirtualDom || {};
 Elm.VirtualDom.make = function (_elm) {
    "use strict";
@@ -10496,7 +10539,8 @@ Elm.VirtualDom.make = function (_elm) {
                                    ,lazy2: lazy2
                                    ,lazy3: lazy3
                                    ,Options: Options};
-};Elm.Html = Elm.Html || {};
+};
+Elm.Html = Elm.Html || {};
 Elm.Html.make = function (_elm) {
    "use strict";
    _elm.Html = _elm.Html || {};
@@ -10718,7 +10762,8 @@ Elm.Html.make = function (_elm) {
                              ,summary: summary
                              ,menuitem: menuitem
                              ,menu: menu};
-};Elm.Html = Elm.Html || {};
+};
+Elm.Html = Elm.Html || {};
 Elm.Html.Attributes = Elm.Html.Attributes || {};
 Elm.Html.Attributes.make = function (_elm) {
    "use strict";
@@ -10942,7 +10987,8 @@ Elm.Html.Attributes.make = function (_elm) {
                                         ,manifest: manifest
                                         ,property: property
                                         ,attribute: attribute};
-};Elm.Html = Elm.Html || {};
+};
+Elm.Html = Elm.Html || {};
 Elm.Html.Events = Elm.Html.Events || {};
 Elm.Html.Events.make = function (_elm) {
    "use strict";
@@ -11007,14 +11053,14 @@ Elm.Html.Events.make = function (_elm) {
                                     ,targetChecked: targetChecked
                                     ,keyCode: keyCode
                                     ,Options: Options};
-};Elm.MainLogic = Elm.MainLogic || {};
+};
+Elm.MainLogic = Elm.MainLogic || {};
 Elm.MainLogic.make = function (_elm) {
    "use strict";
    _elm.MainLogic = _elm.MainLogic || {};
    if (_elm.MainLogic.values) return _elm.MainLogic.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
-   $Char = Elm.Char.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Effects = Elm.Effects.make(_elm),
    $Giphy = Elm.Giphy.make(_elm),
@@ -11040,17 +11086,8 @@ Elm.MainLogic.make = function (_elm) {
          }
    });
    var headlineToPhrases = function (headline) {
-      return A2($List.map,
-      $String.join(" "),
-      A2(groups,
-      2,
-      A2($List.filter,
-      function (s) {
-         return _U.cmp($String.length(s),3) > 0;
-      },
-      A2($List.map,$String.filter($Char.isLower),A2($List.map,$String.toLower,$String.words(headline))))));
+      return A2($List.map,$String.join(" "),A2(groups,2,A2($List.filter,function (s) {    return _U.cmp($String.length(s),3) > 0;},$String.words(headline))));
    };
-   var getTranslateGifNoFail = function (phrase) {    return A2($Task.onError,$Giphy.getTranslateGif(phrase),function (_p2) {    return $Task.succeed("");});};
    var Next = {ctor: "Next"};
    var view = F2(function (address,model) {
       var renderImages = A2($List.map,function (url) {    return A2($Html.img,_U.list([$Html$Attributes.src(url)]),_U.list([]));},model.gifUrls);
@@ -11060,25 +11097,26 @@ Elm.MainLogic.make = function (_elm) {
    });
    var NewGifUrls = function (a) {    return {ctor: "NewGifUrls",_0: a};};
    var fetchGifUrls = function (headline) {
-      return $Effects.task(A2($Task.map,NewGifUrls,$Task.toMaybe($Task.sequence(A2($List.map,getTranslateGifNoFail,headlineToPhrases(headline))))));
+      return $Effects.task(A2($Task.map,NewGifUrls,$Task.toMaybe($Task.sequence(A2($List.map,$Giphy.getTranslateGif,headlineToPhrases(headline))))));
    };
    var update = F2(function (action,model) {
-      var _p3 = action;
-      switch (_p3.ctor)
-      {case "NewHeadlines": var newModel = _U.update(model,{headlines: A2($Maybe.withDefault,model.headlines,_p3._0),index: 0});
+      var _p2 = action;
+      switch (_p2.ctor)
+      {case "NewHeadlines": var newModel = _U.update(model,{headlines: A2($Maybe.withDefault,model.headlines,_p2._0),index: 0});
            return {ctor: "_Tuple2",_0: newModel,_1: fetchGifUrls(currentHeadline(newModel))};
-         case "NewGifUrls": return {ctor: "_Tuple2",_0: _U.update(model,{gifUrls: A2($Maybe.withDefault,model.gifUrls,_p3._0)}),_1: $Effects.none};
+         case "NewGifUrls": return {ctor: "_Tuple2",_0: _U.update(model,{gifUrls: A2($Maybe.withDefault,model.gifUrls,_p2._0)}),_1: $Effects.none};
          default: var newModel = _U.update(model,{index: A2($Basics._op["%"],model.index + 1,$List.length(model.headlines)),gifUrls: _U.list([])});
            return {ctor: "_Tuple2",_0: newModel,_1: fetchGifUrls(currentHeadline(newModel))};}
    });
    var NewHeadlines = function (a) {    return {ctor: "NewHeadlines",_0: a};};
    var fetchHeadlines = $Effects.task(A2($Task.map,
    NewHeadlines,
-   $Task.toMaybe(A2($MiniScraper.scrapeTexts,"http://edition.cnn.com/",".cd__headline .cd__headline-text"))));
+   $Task.toMaybe(A2($MiniScraper.scrapeTexts,"http://edition.cnn.com/",".cn--idx-1 .cd__headline .cd__headline-text"))));
    var Model = F3(function (a,b,c) {    return {headlines: a,index: b,gifUrls: c};});
    var init = {ctor: "_Tuple2",_0: A3(Model,_U.list([]),0,_U.list([])),_1: fetchHeadlines};
    return _elm.MainLogic.values = {_op: _op,init: init,view: view,update: update};
-};Elm.StartApp = Elm.StartApp || {};
+};
+Elm.StartApp = Elm.StartApp || {};
 Elm.StartApp.make = function (_elm) {
    "use strict";
    _elm.StartApp = _elm.StartApp || {};
@@ -11116,7 +11154,8 @@ Elm.StartApp.make = function (_elm) {
    var App = F3(function (a,b,c) {    return {html: a,model: b,tasks: c};});
    var Config = F4(function (a,b,c,d) {    return {init: a,update: b,view: c,inputs: d};});
    return _elm.StartApp.values = {_op: _op,start: start,Config: Config,App: App};
-};Elm.Main = Elm.Main || {};
+};
+Elm.Main = Elm.Main || {};
 Elm.Main.make = function (_elm) {
    "use strict";
    _elm.Main = _elm.Main || {};
@@ -11137,4 +11176,4 @@ Elm.Main.make = function (_elm) {
    var main = app.html;
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
    return _elm.Main.values = {_op: _op,app: app,main: main};
-};</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script></body></html>
+};
