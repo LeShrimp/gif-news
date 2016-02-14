@@ -11030,46 +11030,57 @@ Elm.MainLogic.make = function (_elm) {
    $Task = Elm.Task.make(_elm);
    var _op = {};
    var currentHeadline = function (model) {    return A2($Maybe.withDefault,"",$List.head(A2($List.drop,model.index,model.headlines)));};
-   var groups = F2(function (n,xs) {
-      var _p0 = xs;
-      if (_p0.ctor === "[]") {
-            return _U.list([]);
-         } else {
-            var _p1 = _p0;
-            return A2($List._op["::"],A2($List.take,n,_p1),A2(groups,n,A2($List.drop,n,_p1)));
-         }
-   });
-   var headlineToPhrases = function (headline) {
-      return A2($List.map,
-      $String.join(" "),
-      A2(groups,
-      2,
+   var cleanHeadline = function (headline) {
+      return A2($String.join,
+      " ",
       A2($List.filter,
       function (s) {
          return _U.cmp($String.length(s),3) > 0;
       },
-      A2($List.map,$String.filter($Char.isLower),A2($List.map,$String.toLower,$String.words(headline))))));
+      A2($List.map,$String.filter($Char.isLower),A2($List.map,$String.toLower,$String.words(headline)))));
    };
-   var getTranslateGifNoFail = function (phrase) {    return A2($Task.onError,$Giphy.getTranslateGif(phrase),function (_p2) {    return $Task.succeed("");});};
-   var Next = {ctor: "Next"};
+   var NextHeadline = {ctor: "NextHeadline"};
    var view = F2(function (address,model) {
-      var renderImages = A2($List.map,function (url) {    return A2($Html.img,_U.list([$Html$Attributes.src(url)]),_U.list([]));},model.gifUrls);
+      var renderImages = A2($List.map,
+      function (_p0) {
+         var _p1 = _p0;
+         return A2($Html.img,_U.list([$Html$Attributes.src(_p1._1)]),_U.list([]));
+      },
+      model.gifUrls);
       return A2($Html.div,
-      _U.list([A2($Html$Events.onClick,address,Next)]),
+      _U.list([A2($Html$Events.onClick,address,NextHeadline)]),
       _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text(currentHeadline(model))])),A2($Html.div,_U.list([]),renderImages)]));
    });
-   var NewGifUrls = function (a) {    return {ctor: "NewGifUrls",_0: a};};
-   var fetchGifUrls = function (headline) {
-      return $Effects.task(A2($Task.map,NewGifUrls,$Task.toMaybe($Task.sequence(A2($List.map,getTranslateGifNoFail,headlineToPhrases(headline))))));
+   var NextGifUrl = F2(function (a,b) {    return {ctor: "NextGifUrl",_0: a,_1: b};});
+   var fetchNextGifUrl = function (remainigHeadline) {
+      var remainigPhrase = A2($String.join," ",A2($List.drop,2,$String.words(remainigHeadline)));
+      var firstTwoWords = A2($String.join," ",A2($List.take,2,$String.words(remainigHeadline)));
+      return $Effects.task(A2($Task.map,
+      function (maybeUrl) {
+         return A2(NextGifUrl,{ctor: "_Tuple2",_0: firstTwoWords,_1: maybeUrl},remainigPhrase);
+      },
+      $Task.toMaybe($Giphy.getTranslateGif(firstTwoWords))));
    };
    var update = F2(function (action,model) {
-      var _p3 = action;
-      switch (_p3.ctor)
-      {case "NewHeadlines": var newModel = _U.update(model,{headlines: A2($Maybe.withDefault,model.headlines,_p3._0),index: 0});
-           return {ctor: "_Tuple2",_0: newModel,_1: fetchGifUrls(currentHeadline(newModel))};
-         case "NewGifUrls": return {ctor: "_Tuple2",_0: _U.update(model,{gifUrls: A2($Maybe.withDefault,model.gifUrls,_p3._0)}),_1: $Effects.none};
+      var _p2 = action;
+      switch (_p2.ctor)
+      {case "NewHeadlines": var newModel = _U.update(model,{headlines: A2($Maybe.withDefault,model.headlines,_p2._0),index: 0});
+           return {ctor: "_Tuple2",_0: newModel,_1: fetchNextGifUrl(cleanHeadline(currentHeadline(newModel)))};
+         case "NextGifUrl": var _p5 = _p2._1;
+           var _p4 = _p2._0._0;
+           var nextEffect = _U.eq(_p5,"") ? $Effects.none : fetchNextGifUrl(_p5);
+           var _p3 = _p2._0._1;
+           if (_p3.ctor === "Just") {
+                 return {ctor: "_Tuple2"
+                        ,_0: _U.update(model,{gifUrls: A2($List.append,model.gifUrls,_U.list([{ctor: "_Tuple2",_0: _p4,_1: _p3._0}]))})
+                        ,_1: nextEffect};
+              } else {
+                 return {ctor: "_Tuple2"
+                        ,_0: _U.update(model,{gifUrls: A2($List.append,model.gifUrls,_U.list([{ctor: "_Tuple2",_0: _p4,_1: ""}]))})
+                        ,_1: nextEffect};
+              }
          default: var newModel = _U.update(model,{index: A2($Basics._op["%"],model.index + 1,$List.length(model.headlines)),gifUrls: _U.list([])});
-           return {ctor: "_Tuple2",_0: newModel,_1: fetchGifUrls(currentHeadline(newModel))};}
+           return {ctor: "_Tuple2",_0: newModel,_1: fetchNextGifUrl(cleanHeadline(currentHeadline(newModel)))};}
    });
    var NewHeadlines = function (a) {    return {ctor: "NewHeadlines",_0: a};};
    var fetchHeadlines = $Effects.task(A2($Task.map,

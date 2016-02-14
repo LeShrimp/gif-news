@@ -18,13 +18,14 @@ import Char exposing (..)
 type alias Model =
   { headlines : List String
   , index : Int
-  , gifUrls : List String
+  -- Matching phrase to image url
+  , gifUrls : List (String, String)
   }
 
 type Action
   = NewHeadlines (Maybe (List String))
-  | NewGifUrls (Maybe (List String))
-  | Next
+  | NextGifUrl (String, Maybe String) String
+  | NextHeadline
 
 fetchHeadlines : Effects Action
 fetchHeadlines =
@@ -34,41 +35,19 @@ fetchHeadlines =
     |> Effects.task
 
 
-getTranslateGifNoFail : String -> Task x String
-getTranslateGifNoFail phrase =
-  getTranslateGif phrase `onError` (\_ -> succeed "")
+fetchNextGifUrl : String -> Effects Action
+fetchNextGifUrl remainigHeadline =
+  let
+    firstTwoWords =
+      String.join " " (List.take 2 (words remainigHeadline))
 
-fetchGifUrls : String -> Effects Action
-fetchGifUrls headline =
-  List.map getTranslateGifNoFail (headlineToPhrases headline)
-    |> Task.sequence
-    |> Task.toMaybe
-    |> Task.map NewGifUrls
-    |> Effects.task
-
-
-{-
-fetchGifUrls : String -> Effects Action
-fetchGifUrls headline =
-  fetchGifUrlsForListOfPhrases (headlineToPhrases headline)
--}
-
-headlineToPhrases : String -> List String
-headlineToPhrases headline =
-  words headline
-    |> List.map String.toLower
-    |> List.map (String.filter Char.isLower)
-    |> List.filter (\s -> String.length s > 3)
-    |> groups 2
-    |> List.map (join " ")
-
-groups : Int -> List a -> List (List a)
-groups n xs =
-  case xs of
-    [] ->
-      []
-    xs ->
-      (List.take n xs) :: (groups n (List.drop n xs))
+    remainigPhrase =
+      String.join " " (List.drop 2 (words remainigHeadline))
+  in
+    getTranslateGif firstTwoWords
+      |> Task.toMaybe
+      |> Task.map (\maybeUrl -> NextGifUrl (firstTwoWords, maybeUrl) remainigPhrase)
+      |> Effects.task
 
 init : (Model, Effects Action)
 init =
@@ -85,22 +64,46 @@ update action model =
           {model | headlines = (Maybe.withDefault model.headlines maybeHeadlines), index = 0}
       in
         ( newModel
-        , fetchGifUrls (currentHeadline newModel)
+        , fetchNextGifUrl (cleanHeadline <| currentHeadline newModel)
         )
 
-    NewGifUrls gifUrls ->
-      ( {model | gifUrls = (Maybe.withDefault model.gifUrls gifUrls) }
-      , Effects.none
-      )
+    NextGifUrl (phrase, maybeUrl) remainingHeadline ->
+      let
+        nextEffect =
+          if remainingHeadline == "" then
+            Effects.none
+          else
+            fetchNextGifUrl remainingHeadline
 
-    Next ->
+      in
+        case maybeUrl of
+          Just url ->
+            ( { model | gifUrls = model.gifUrls `List.append` [(phrase, url)] }
+            , nextEffect
+            )
+
+          Nothing ->
+            ( { model | gifUrls = model.gifUrls `List.append` [(phrase, "")] }
+            , nextEffect
+            )
+
+    NextHeadline ->
       let
         newModel =
           {model | index = (model.index + 1) % (List.length model.headlines), gifUrls = []}
       in
         ( newModel
-        , fetchGifUrls (currentHeadline newModel)
+        , fetchNextGifUrl (cleanHeadline <| currentHeadline newModel)
         )
+
+cleanHeadline : String -> String
+cleanHeadline headline =
+  words headline
+    |> List.map String.toLower
+    |> List.map (String.filter Char.isLower)
+    |> List.filter (\s -> String.length s > 3)
+    |> String.join " "
+
 
 currentHeadline : Model -> String
 currentHeadline model =
@@ -108,13 +111,14 @@ currentHeadline model =
   |> List.head
   |> Maybe.withDefault ""
 
+
 view : Signal.Address Action -> Model -> Html
 view address model =
   let
     renderImages =
-      List.map (\url -> img [src url] []) model.gifUrls
+      List.map (\(s, url) -> img [src url] []) model.gifUrls
   in
-    div [onClick address Next]
+    div [onClick address NextHeadline]
       [ h1 [] [text (currentHeadline model)]
       , div [] renderImages
       ]
