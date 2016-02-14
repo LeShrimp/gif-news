@@ -14,6 +14,9 @@ import Html.Events exposing (..)
 import Task exposing (..)
 import String exposing (words, join)
 import Char exposing (..)
+import Text exposing (..)
+import Graphics.Element as Element exposing (..)
+import Window exposing (..)
 
 type alias Model =
   { headlines : List String
@@ -60,7 +63,7 @@ headlineToPhrases headline =
     |> List.map (String.filter Char.isLower)
     |> List.filter (\s -> String.length s > 3)
     |> groups 2
-    |> List.map (join " ")
+    |> List.map (String.join " ")
 
 groups : Int -> List a -> List (List a)
 groups n xs =
@@ -113,8 +116,11 @@ view address model =
   let
     renderImages =
       List.map (\url -> img [src url] []) model.gifUrls
+
+    headlineElement =
+      Text.fromString (currentHeadline model)
+        |> Element.centered
   in
-    div [onClick address Next]
-      [ h1 [] [text (currentHeadline model)]
-      , div [] renderImages
-      ]
+    Html.fromElement
+      <| container 640 640 middle
+      <| flow down (headlineElement :: (List.map (Html.toElement 200 200) renderImages))

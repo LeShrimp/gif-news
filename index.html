@@ -11007,6 +11007,84 @@ Elm.Html.Events.make = function (_elm) {
                                     ,targetChecked: targetChecked
                                     ,keyCode: keyCode
                                     ,Options: Options};
+};Elm.Native = Elm.Native || {};
+Elm.Native.Window = {};
+Elm.Native.Window.make = function make(localRuntime) {
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Window = localRuntime.Native.Window || {};
+	if (localRuntime.Native.Window.values)
+	{
+		return localRuntime.Native.Window.values;
+	}
+
+	var NS = Elm.Native.Signal.make(localRuntime);
+	var Tuple2 = Elm.Native.Utils.make(localRuntime).Tuple2;
+
+
+	function getWidth()
+	{
+		return localRuntime.node.clientWidth;
+	}
+
+
+	function getHeight()
+	{
+		if (localRuntime.isFullscreen())
+		{
+			return window.innerHeight;
+		}
+		return localRuntime.node.clientHeight;
+	}
+
+
+	var dimensions = NS.input('Window.dimensions', Tuple2(getWidth(), getHeight()));
+
+
+	function resizeIfNeeded()
+	{
+		// Do not trigger event if the dimensions have not changed.
+		// This should be most of the time.
+		var w = getWidth();
+		var h = getHeight();
+		if (dimensions.value._0 === w && dimensions.value._1 === h)
+		{
+			return;
+		}
+
+		setTimeout(function() {
+			// Check again to see if the dimensions have changed.
+			// It is conceivable that the dimensions have changed
+			// again while some other event was being processed.
+			w = getWidth();
+			h = getHeight();
+			if (dimensions.value._0 === w && dimensions.value._1 === h)
+			{
+				return;
+			}
+			localRuntime.notify(dimensions.id, Tuple2(w, h));
+		}, 0);
+	}
+
+
+	localRuntime.addListener([dimensions.id], window, 'resize', resizeIfNeeded);
+
+
+	return localRuntime.Native.Window.values = {
+		dimensions: dimensions,
+		resizeIfNeeded: resizeIfNeeded
+	};
+};
+Elm.Window = Elm.Window || {};
+Elm.Window.make = function (_elm) {
+   "use strict";
+   _elm.Window = _elm.Window || {};
+   if (_elm.Window.values) return _elm.Window.values;
+   var _U = Elm.Native.Utils.make(_elm),$Basics = Elm.Basics.make(_elm),$Native$Window = Elm.Native.Window.make(_elm),$Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var dimensions = $Native$Window.dimensions;
+   var width = A2($Signal.map,$Basics.fst,dimensions);
+   var height = A2($Signal.map,$Basics.snd,dimensions);
+   return _elm.Window.values = {_op: _op,dimensions: dimensions,width: width,height: height};
 };Elm.MainLogic = Elm.MainLogic || {};
 Elm.MainLogic.make = function (_elm) {
    "use strict";
@@ -11018,18 +11096,28 @@ Elm.MainLogic.make = function (_elm) {
    $Debug = Elm.Debug.make(_elm),
    $Effects = Elm.Effects.make(_elm),
    $Giphy = Elm.Giphy.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $MiniScraper = Elm.MiniScraper.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $String = Elm.String.make(_elm),
-   $Task = Elm.Task.make(_elm);
+   $Task = Elm.Task.make(_elm),
+   $Text = Elm.Text.make(_elm);
    var _op = {};
    var currentHeadline = function (model) {    return A2($Maybe.withDefault,"",$List.head(A2($List.drop,model.index,model.headlines)));};
+   var view = F2(function (address,model) {
+      var headlineElement = $Graphics$Element.centered($Text.fromString(currentHeadline(model)));
+      var renderImages = A2($List.map,function (url) {    return A2($Html.img,_U.list([$Html$Attributes.src(url)]),_U.list([]));},model.gifUrls);
+      return $Html.fromElement(A4($Graphics$Element.container,
+      640,
+      640,
+      $Graphics$Element.middle,
+      A2($Graphics$Element.flow,$Graphics$Element.down,A2($List._op["::"],headlineElement,A2($List.map,A2($Html.toElement,200,200),renderImages)))));
+   });
    var groups = F2(function (n,xs) {
       var _p0 = xs;
       if (_p0.ctor === "[]") {
@@ -11052,12 +11140,6 @@ Elm.MainLogic.make = function (_elm) {
    };
    var getTranslateGifNoFail = function (phrase) {    return A2($Task.onError,$Giphy.getTranslateGif(phrase),function (_p2) {    return $Task.succeed("");});};
    var Next = {ctor: "Next"};
-   var view = F2(function (address,model) {
-      var renderImages = A2($List.map,function (url) {    return A2($Html.img,_U.list([$Html$Attributes.src(url)]),_U.list([]));},model.gifUrls);
-      return A2($Html.div,
-      _U.list([A2($Html$Events.onClick,address,Next)]),
-      _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text(currentHeadline(model))])),A2($Html.div,_U.list([]),renderImages)]));
-   });
    var NewGifUrls = function (a) {    return {ctor: "NewGifUrls",_0: a};};
    var fetchGifUrls = function (headline) {
       return $Effects.task(A2($Task.map,NewGifUrls,$Task.toMaybe($Task.sequence(A2($List.map,getTranslateGifNoFail,headlineToPhrases(headline))))));
