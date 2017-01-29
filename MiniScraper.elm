@@ -54,7 +54,7 @@ postRequest url selector =
   send defaultSettings
     { verb = "POST"
     , headers = ["Content-Type" => "application/json"]
-    , url = "http://www.thereisbeauty.de/mini-scraper/"
+    , url = __URL_WHERE_MINI_SCRAPER_WAS_INSTALLED__
     , body = Http.string (requestBody url selector)
     }
 
